@@ -26,21 +26,21 @@ function validarFormulario(e) {
 }
 
 function manejarErrores(errores) {
-	const keys = Object.keys(errores);
+	const nombreInputs = Object.keys(errores);
 	const $errores = document.querySelector("#errores");
 	limpiarErrores();
 
 	let cantidadErrores = 0;
-	keys.forEach(function(key) {
-		const error = errores[key];
+	nombreInputs.forEach(function(nombreInput) {
+		const error = errores[nombreInput];
 		if (error) {
 			cantidadErrores++;
-			$form[key].className = "error";
+			$form[nombreInput].className = "error";
 			const $error = document.createElement("li");
 			$error.innerText = error;
 			$errores.appendChild($error);
 		} else {
-			$form[key].className = "";
+			$form[nombreInput].className = "";
 		}
 	});
 	return cantidadErrores;
