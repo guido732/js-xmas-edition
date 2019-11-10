@@ -7,17 +7,14 @@ function validarFormulario(e) {
 	const nombre = $form.nombre.value;
 	const ciudad = $form.ciudad.value;
 	const descripcionRegalo = $form["descripcion-regalo"].value; //para nombres que tienen "-"
-
 	const errorNombre = validarNombre(nombre);
 	const errorCiudad = validarCiudad(ciudad);
 	const errorDescripcionRegalo = validarDescripcionRegalo(descripcionRegalo);
-
 	const errores = {
 		nombre: errorNombre,
 		ciudad: errorCiudad,
 		"descripcion-regalo": errorDescripcionRegalo
 	};
-
 	const esExito = manejarErrores(errores) === 0;
 	if (esExito) {
 		document.querySelector("#exito").classList = "";
@@ -31,6 +28,7 @@ function validarFormulario(e) {
 function manejarErrores(errores) {
 	const keys = Object.keys(errores);
 	const $errores = document.querySelector("#errores");
+	limpiarErrores();
 
 	let cantidadErrores = 0;
 	keys.forEach(function(key) {
@@ -46,6 +44,13 @@ function manejarErrores(errores) {
 		}
 	});
 	return cantidadErrores;
+}
+
+function limpiarErrores() {
+	const errores = document.querySelector("#errores").querySelectorAll("li");
+	errores.forEach(error => {
+		error.parentNode.removeChild(error);
+	});
 }
 
 function validarNombre(nombre) {
