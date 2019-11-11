@@ -5,14 +5,62 @@ Al hacer click en "calcular", mostrar en un elemento pre-existente la mayor edad
 
 Punto bonus: Crear un botón para "empezar de nuevo" que empiece el proceso nuevamente, borrando los inputs ya creados (investigar cómo en MDN).
 */
+
+const $form = document.formulario;
+
 document.querySelector("#submit-cantidad-familiares").onclick = function(e) {
 	e.preventDefault();
-	const cantidadFamiliares = Number(document.querySelector("#cantidad-familiares").value);
-	if (cantidadFamiliares < 1) {
-		return false;
+	const cantidadFamiliares = document.querySelector("#cantidad-familiares").value;
+	const errorCantidadFamiliares = validarCantidadFamiliares(cantidadFamiliares);
+	const errores = {
+		"cantidad-familiares": errorCantidadFamiliares
+	};
+
+	const esExito = manejarErrores(errores) === 0;
+	if (esExito) {
+		agregarElementos(cantidadFamiliares);
 	}
-	agregarElementos(cantidadFamiliares);
 };
+
+function validarCantidadFamiliares(cantidadFamiliares) {
+	const soloNumeros = /^\d+$/.test(cantidadFamiliares);
+	if (cantidadFamiliares === "") {
+		return "Tenés que ingresar un valor";
+	} else if (!soloNumeros) {
+		return "Solo se pueden ingresar caracteres numéricos enteros";
+	} else {
+		return "";
+	}
+}
+
+function manejarErrores(errores) {
+	const nombreInputs = Object.keys(errores);
+	const $errores = document.querySelector("#errores");
+	limpiarErrores();
+
+	let cantidadErrores = 0;
+	nombreInputs.forEach(function(nombreInput) {
+		const error = errores[nombreInput];
+		if (error) {
+			cantidadErrores++;
+			$form[nombreInput].className = "error";
+			const $error = document.createElement("li");
+			$error.innerText = error;
+			$errores.appendChild($error);
+		} else {
+			$form[nombreInput].className = "";
+		}
+	});
+	return cantidadErrores;
+}
+
+function limpiarErrores() {
+	const errores = document.querySelector("#errores").querySelectorAll("li");
+	errores.forEach(error => {
+		error.parentNode.removeChild(error);
+	});
+}
+
 document.querySelector("#calcular-edades").onclick = function(e) {
 	e.preventDefault();
 	const inputsEdadesCrudo = document.querySelectorAll(".generated-element-input");
@@ -42,7 +90,9 @@ document.querySelector("#reset").onclick = function(e) {
 	document.querySelector("#submit-cantidad-familiares").disabled = false;
 	document.querySelector("#cantidad-familiares").disabled = false;
 	document.querySelector("#cantidad-familiares").value = "";
+	document.querySelector("#cantidad-familiares").className = "";
 	document.querySelector("#calcular-edades").hidden = true;
+	limpiarErrores();
 };
 function agregarElementos(cantidad) {
 	for (let i = 0; i < cantidad; i++) {
