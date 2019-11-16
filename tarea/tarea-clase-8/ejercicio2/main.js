@@ -64,7 +64,7 @@ function eliminarElemento() {
 }
 
 function validarArray(arrayInput) {
-	let arrayOutput = [];
+	const arrayOutput = [];
 	for (let arrayValue of arrayInput) {
 		if (arrayValue > 0) {
 			arrayOutput.push(arrayValue);
