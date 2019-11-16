@@ -73,11 +73,16 @@ button {
 	flex-direction: column;
 }
 .output {
-	p {
+	margin-left: 1rem;
+	li {
 		text-align: left;
 		margin-bottom: 0.25rem;
 		&:last-child {
 			margin-bottom: 0.75rem;
 		}
 	}
+}
+
+.error {
+	border: 1px solid red;
 }

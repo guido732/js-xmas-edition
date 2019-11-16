@@ -36,12 +36,36 @@ document.querySelector("#calcular-edades").onclick = function(e) {
 	// La función validar edades hace las validaciones y devuelve directamente el JSON
 	const erroresEdadFamiliares = validarEdadFamiliares(inputsEdades);
 	const esExito = manejarErrores(erroresEdadFamiliares) === 0;
+
 	if (esExito) {
 		const contenedorOutput = document.querySelector("#output");
-		contenedorOutput.appendChild(crearElementoParrafo(calcularEdadPromedio(inputsEdades), "promedio"));
-		contenedorOutput.appendChild(crearElementoParrafo(calcularEdadMinima(inputsEdades), "mínima"));
-		contenedorOutput.appendChild(crearElementoParrafo(calcularEdadMaxima(inputsEdades), "máxima"));
+		eliminarElementosResultado();
+		contenedorOutput.appendChild(crearElementoResultado(calcularEdadPromedio(inputsEdades), "promedio"));
+		contenedorOutput.appendChild(crearElementoResultado(calcularEdadMinima(inputsEdades), "mínima"));
+		contenedorOutput.appendChild(crearElementoResultado(calcularEdadMaxima(inputsEdades), "máxima"));
 	}
+};
+
+document.querySelector("#reset").onclick = function(e) {
+	e.preventDefault();
+	const inputs = document.querySelectorAll(".generated-element-input");
+	inputs.forEach(element => {
+		element.remove();
+	});
+	const labels = document.querySelectorAll(".generated-element-label");
+	labels.forEach(element => {
+		element.remove();
+	});
+	const paragraphs = document.querySelectorAll(".li-element");
+	paragraphs.forEach(element => {
+		element.remove();
+	});
+	document.querySelector("#submit-cantidad-familiares").disabled = false;
+	document.querySelector("#cantidad-familiares").disabled = false;
+	document.querySelector("#cantidad-familiares").value = "";
+	document.querySelector("#cantidad-familiares").className = "";
+	document.querySelector("#calcular-edades").hidden = true;
+	limpiarErrores();
 };
 
 function validarCantidadFamiliares($cantidadFamiliares) {
@@ -91,33 +115,11 @@ function manejarErrores(errores) {
 
 function limpiarErrores() {
 	const errores = document.querySelector("#errores").querySelectorAll("li");
-
 	errores.forEach(error => {
 		error.parentNode.removeChild(error);
 	});
 }
 
-document.querySelector("#reset").onclick = function(e) {
-	e.preventDefault();
-	const inputs = document.querySelectorAll(".generated-element-input");
-	inputs.forEach(element => {
-		element.remove();
-	});
-	const labels = document.querySelectorAll(".generated-element-label");
-	labels.forEach(element => {
-		element.remove();
-	});
-	const paragraphs = document.querySelectorAll(".paragraph-element");
-	paragraphs.forEach(element => {
-		element.remove();
-	});
-	document.querySelector("#submit-cantidad-familiares").disabled = false;
-	document.querySelector("#cantidad-familiares").disabled = false;
-	document.querySelector("#cantidad-familiares").value = "";
-	document.querySelector("#cantidad-familiares").className = "";
-	document.querySelector("#calcular-edades").hidden = true;
-	limpiarErrores();
-};
 function agregarElementos(cantidad) {
 	for (let i = 0; i < cantidad; i++) {
 		const newLabel = document.createElement("label");
@@ -159,9 +161,16 @@ function calcularEdadMaxima(arrayEdades) {
 	}
 	return edadMaxima;
 }
-function crearElementoParrafo(valorInterno, nombreFuncion) {
-	const nuevoParrafo = document.createElement("p");
-	nuevoParrafo.classList.add("paragraph-element");
-	nuevoParrafo.innerHTML = `La edad ${nombreFuncion} es ${valorInterno}`;
-	return nuevoParrafo;
+function crearElementoResultado(valorInterno, nombreFuncion) {
+	const nuevoElementoResultado = document.createElement("li");
+	nuevoElementoResultado.classList.add("li-element");
+	nuevoElementoResultado.innerHTML = `La edad ${nombreFuncion} es ${valorInterno}`;
+	return nuevoElementoResultado;
+}
+
+function eliminarElementosResultado() {
+	const $elementosResultado = document.querySelectorAll("#output > li");
+	$elementosResultado.forEach(elementoResultado => {
+		elementoResultado.parentNode.removeChild(elementoResultado);
+	});
 }
