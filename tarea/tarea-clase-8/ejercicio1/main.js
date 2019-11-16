@@ -10,21 +10,43 @@ const $form = document.formulario;
 
 document.querySelector("#submit-cantidad-familiares").onclick = function(e) {
 	e.preventDefault();
-	const cantidadFamiliares = document.querySelector("#cantidad-familiares").value;
-	const errorCantidadFamiliares = validarCantidadFamiliares(cantidadFamiliares);
+	// Primera etapa, click en el botón de Aceptar para agregar los elementos
+	const $cantidadFamiliares = document.querySelector("#cantidad-familiares").value;
+	const errorCantidadFamiliares = validarCantidadFamiliares($cantidadFamiliares);
 	const errores = {
 		"cantidad-familiares": errorCantidadFamiliares
 	};
 
 	const esExito = manejarErrores(errores) === 0;
 	if (esExito) {
-		agregarElementos(cantidadFamiliares);
+		agregarElementos($cantidadFamiliares);
 	}
 };
 
-function validarCantidadFamiliares(cantidadFamiliares) {
-	const soloNumeros = /^\d+$/.test(cantidadFamiliares);
-	if (cantidadFamiliares === "") {
+document.querySelector("#calcular-edades").onclick = function(e) {
+	e.preventDefault();
+	// Segunda etapa, click en el botón de Calcular Edades para calcular valores
+
+	const inputsEdadesCrudo = document.querySelectorAll(".generated-element-input");
+	const inputsEdades = [];
+	for (let elemento of inputsEdadesCrudo) {
+		inputsEdades.push(Number(elemento.value));
+	}
+	// No se la cantidad de inputs a generar, no puedo generar previamente el JSON
+	// La función validar edades hace las validaciones y devuelve directamente el JSON
+	const erroresEdadFamiliares = validarEdadFamiliares(inputsEdades);
+	const esExito = manejarErrores(erroresEdadFamiliares) === 0;
+	if (esExito) {
+		const contenedorOutput = document.querySelector("#output");
+		contenedorOutput.appendChild(crearElementoParrafo(calcularEdadPromedio(inputsEdades), "promedio"));
+		contenedorOutput.appendChild(crearElementoParrafo(calcularEdadMinima(inputsEdades), "mínima"));
+		contenedorOutput.appendChild(crearElementoParrafo(calcularEdadMaxima(inputsEdades), "máxima"));
+	}
+};
+
+function validarCantidadFamiliares($cantidadFamiliares) {
+	const soloNumeros = /^\d+$/.test($cantidadFamiliares);
+	if ($cantidadFamiliares == "") {
 		return "Tenés que ingresar un valor";
 	} else if (!soloNumeros) {
 		return "Solo se pueden ingresar caracteres numéricos enteros";
@@ -33,22 +55,35 @@ function validarCantidadFamiliares(cantidadFamiliares) {
 	}
 }
 
+function validarEdadFamiliares(edadesFamiliares) {
+	const erroresJSON = {};
+	// Uso un For en vez de forEach porque necesito el index como valor
+	for (let i = 1; i <= edadesFamiliares.length; i++) {
+		// Llamo a la función de validarCantidadFamiliares pasándole un valor a la vez
+		// Aprovecho la validación de errores y Unit Tests ya hechos
+		erroresJSON[`familiar-${i}`] = validarCantidadFamiliares(edadesFamiliares[i - 1]);
+	}
+	return erroresJSON;
+}
+
 function manejarErrores(errores) {
 	const nombreInputs = Object.keys(errores);
 	const $errores = document.querySelector("#errores");
 	limpiarErrores();
 
 	let cantidadErrores = 0;
-	nombreInputs.forEach(function(nombreInput) {
+	nombreInputs.forEach(nombreInput => {
 		const error = errores[nombreInput];
 		if (error) {
 			cantidadErrores++;
-			$form[nombreInput].className = "error";
+			// Reemplazo className por classList para poder agregar/quitar
+			// En vez de reemplazar todas las clases de mis elementos
+			$form[nombreInput].classList.add("error");
 			const $error = document.createElement("li");
 			$error.innerText = error;
 			$errores.appendChild($error);
 		} else {
-			$form[nombreInput].className = "";
+			$form[nombreInput].classList.remove("error");
 		}
 	});
 	return cantidadErrores;
@@ -56,23 +91,12 @@ function manejarErrores(errores) {
 
 function limpiarErrores() {
 	const errores = document.querySelector("#errores").querySelectorAll("li");
+
 	errores.forEach(error => {
 		error.parentNode.removeChild(error);
 	});
 }
 
-document.querySelector("#calcular-edades").onclick = function(e) {
-	e.preventDefault();
-	const inputsEdadesCrudo = document.querySelectorAll(".generated-element-input");
-	const inputsEdades = [];
-	for (let elemento of inputsEdadesCrudo) {
-		inputsEdades.push(Number(elemento.value));
-	}
-	const contenedorOutput = document.querySelector("#output");
-	contenedorOutput.appendChild(crearElementoParrafo(calcularEdadPromedio(inputsEdades), "promedio"));
-	contenedorOutput.appendChild(crearElementoParrafo(calcularEdadMinima(inputsEdades), "mínima"));
-	contenedorOutput.appendChild(crearElementoParrafo(calcularEdadMaxima(inputsEdades), "máxima"));
-};
 document.querySelector("#reset").onclick = function(e) {
 	e.preventDefault();
 	const inputs = document.querySelectorAll(".generated-element-input");
