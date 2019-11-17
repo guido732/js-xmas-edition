@@ -1,15 +1,10 @@
-/*
-TAREA:
-Crear una interfaz que permita agregar ó quitar (botones agregar y quitar) inputs+labels para completar el salario anual de cada integrante de la familia que trabaje.
-Al hacer click en "calcular", mostrar en un elemento pre-existente el mayor salario anual, menor salario anual, salario anual promedio y salario mensual promedio.
-
-Punto bonus: si hay inputs vacíos, ignorarlos en el cálculo (no contarlos como 0).
-*/
 const $form = document.formulario;
+
 document.querySelector("#agregar-familiar").onclick = function(e) {
 	e.preventDefault();
 	agregarElemento();
 };
+
 document.querySelector("#eliminar-familiar").onclick = function(e) {
 	e.preventDefault();
 	eliminarElemento();
@@ -74,6 +69,13 @@ function eliminarElemento() {
 	labels[labels.length - 1].remove();
 }
 
+function crearElementoParrafo(valorInterno, nombreFuncion) {
+	const nuevoParrafo = document.createElement("p");
+	nuevoParrafo.classList.add("p-element-output-info", "generated-element");
+	nuevoParrafo.innerHTML = `El sueldo ${nombreFuncion} es $${valorInterno}`;
+	return nuevoParrafo;
+}
+
 function eliminarValoresResultados() {
 	const paragraphs = document.querySelectorAll(".p-element-output-info");
 	paragraphs.forEach(element => {
@@ -104,15 +106,16 @@ function procesarDatosValidados(inputsSueldos) {
 	return objetoSueldos;
 }
 
+// TODO Validaciones (Unit Tests)
+// TODO Rechazar botón de calcular sin haber ingresado familiares/valores
 function validarSueldosIngresados(valorAValidar) {
 	// Toma un valor único y lo valida con una Regular Expression
 
-	// TODO Validaciones (Unit Tests)
 	const soloNumeros = /^\d+(\.\d{1,2})?$/;
 	if (valorAValidar == "") {
 		return "Tenés que ingresar un valor";
 	} else if (!soloNumeros.test(valorAValidar)) {
-		return "Solo se pueden ingresar caracteres numéricos enteros o con hasta 2 decimales";
+		return "Solo se pueden ingresar números (enteros o con hasta 2 decimales) positivos ";
 	} else {
 		return "";
 	}
@@ -140,89 +143,42 @@ function manejarErrores(errores) {
 	return cantidadErorres;
 }
 
-// ! Ver como sacar esto
-/* function validarArray(arrayInput) {
-	// Se fija que los valores no estén 
-	const arrayOutput = [];
-	for (let arrayValue of arrayInput) {
-		if (arrayValue > 0) {
-			arrayOutput.push(arrayValue);
-		}
-	}
-	return arrayOutput;
-} */
-
-// ! Sacar validaciones viejas
 function calcularSueldoPromedio(arraySueldos) {
 	let sueldoPromedio = 0;
 	let counter = 0;
 	for (let i = 0; i < arraySueldos.length; i++) {
-		if (arraySueldos[i] >= 1) {
-			counter++;
-			sueldoPromedio += arraySueldos[i];
-		}
+		counter++;
+		sueldoPromedio += Number(arraySueldos[i]);
 	}
-	if (counter === 0) {
-		return "Ingresá al menos un sueldo válido";
-	} else {
-		return (sueldoPromedio / counter).toFixed(2);
-	}
+	return (sueldoPromedio / counter).toFixed(2);
 }
 
-// ! Sacar validaciones viejas
 function calcularSueldoMensualPromedio(arraySueldos) {
 	let sueldoPromedio = 0;
 	let counter = 0;
 	for (let i = 0; i < arraySueldos.length; i++) {
-		if (arraySueldos[i] >= 1) {
-			counter++;
-			sueldoPromedio += arraySueldos[i];
-		}
+		counter++;
+		sueldoPromedio += Number(arraySueldos[i]);
 	}
-	if (counter === 0) {
-		return "Ingresá al menos un sueldo válido";
-	} else {
-		return (sueldoPromedio / counter / 12).toFixed(2);
-	}
+	return (sueldoPromedio / counter / 12).toFixed(2);
 }
 
-// ! Sacar validaciones viejas
 function calcularSueldoMinimo(arraySueldos) {
-	// let arraySueldosProcesado = validarArray(arraySueldos);
-	let arraySueldosProcesado = arraySueldos;
-	let sueldoMinimo = arraySueldosProcesado[0];
-	for (let i = 0; i < arraySueldosProcesado.length; i++) {
-		if (arraySueldosProcesado[i] < sueldoMinimo && arraySueldos[i] >= 1) {
-			sueldoMinimo = arraySueldosProcesado[i];
+	let sueldoMinimo = arraySueldos[0];
+	for (let i = 0; i < arraySueldos.length; i++) {
+		if (arraySueldos[i] < sueldoMinimo) {
+			sueldoMinimo = arraySueldos[i];
 		}
 	}
-	if (sueldoMinimo < 1 || sueldoMinimo === undefined) {
-		throw "Ingresá al menos un sueldo válido";
-	} else {
-		// return sueldoMinimo.toFixed(2);
-		return sueldoMinimo;
-	}
+	return sueldoMinimo;
 }
 
-// ! Sacar validaciones viejas
 function calcularSueldoMaximo(arraySueldos) {
 	let sueldoMaximo = arraySueldos[0];
 	for (let i = 0; i < arraySueldos.length; i++) {
-		if (arraySueldos[i] > sueldoMaximo && arraySueldos[i] >= 1) {
+		if (arraySueldos[i] > sueldoMaximo) {
 			sueldoMaximo = arraySueldos[i];
 		}
 	}
-	if (sueldoMaximo < 1) {
-		return "Ingresá al menos un sueldo válido";
-	} else {
-		// return sueldoMaximo.toFixed(2);
-		return sueldoMaximo;
-	}
-}
-
-function crearElementoParrafo(valorInterno, nombreFuncion) {
-	const nuevoParrafo = document.createElement("p");
-	nuevoParrafo.classList.add("p-element-output-info", "generated-element");
-	nuevoParrafo.innerHTML = `El sueldo ${nombreFuncion} es $${valorInterno}`;
-	return nuevoParrafo;
+	return sueldoMaximo;
 }
