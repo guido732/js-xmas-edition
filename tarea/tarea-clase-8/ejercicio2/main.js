@@ -141,7 +141,7 @@ function manejarErrores(errores) {
 	const $errorContainer = document.querySelector("#errores");
 	const nombreInputs = Object.keys(errores);
 	let cantidadErorres = 0;
-	nombreInputs.forEach(function(nombreInput, i) {
+	nombreInputs.forEach((nombreInput, i) => {
 		const error = errores[nombreInput];
 		if (error) {
 			cantidadErorres++;
