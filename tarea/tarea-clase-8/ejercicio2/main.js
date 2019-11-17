@@ -5,7 +5,7 @@ Al hacer click en "calcular", mostrar en un elemento pre-existente el mayor sala
 
 Punto bonus: si hay inputs vacíos, ignorarlos en el cálculo (no contarlos como 0).
 */
-
+const $form = document.formulario;
 document.querySelector("#agregar-familiar").onclick = function(e) {
 	e.preventDefault();
 	agregarElemento();
@@ -17,20 +17,32 @@ document.querySelector("#eliminar-familiar").onclick = function(e) {
 
 document.querySelector("#calcular").onclick = function(e) {
 	e.preventDefault();
-	const paragraphs = document.querySelectorAll(".p-element-output-info");
-	paragraphs.forEach(element => {
-		element.remove();
-	});
-	const inputsEdadesCrudo = document.querySelectorAll(".generated-element-input");
-	const inputsEdades = [];
-	for (let elemento of inputsEdadesCrudo) {
-		inputsEdades.push(Number(elemento.value));
+
+	// Limpiar resultados anteriores en caso de haberlos
+	ocultarValoresResultados();
+
+	// Selecciono todos mis elementos en un nodeList, luego los emprolijo en un array
+	const $inputsSueldosCrudo = document.querySelectorAll(".generated-element-input");
+	const inputsSueldos = [];
+	for (let elemento of $inputsSueldosCrudo) {
+		inputsSueldos.push(elemento.value);
 	}
-	const contenedorOutput = document.querySelector("#output");
-	contenedorOutput.appendChild(crearElementoParrafo(calcularSueldoPromedio(inputsEdades), "promedio"));
-	contenedorOutput.appendChild(crearElementoParrafo(calcularSueldoMensualPromedio(inputsEdades), "mensual promedio"));
-	contenedorOutput.appendChild(crearElementoParrafo(calcularSueldoMinimo(inputsEdades), "mínimo"));
-	contenedorOutput.appendChild(crearElementoParrafo(calcularSueldoMaximo(inputsEdades), "máximo"));
+
+	// Hago validación y devuelve JSON
+	const errores = procesarDatosValidados(inputsSueldos);
+
+	// Manejo de errores y asignación a expresión booleana
+	const exito = manejarErrores(errores) === 0;
+	if (exito) {
+		// Genero y agrego elementos según mis valores ingresados
+		const $contenedorOutput = document.querySelector("#output");
+		$contenedorOutput.appendChild(crearElementoParrafo(calcularSueldoPromedio(inputsSueldos), "promedio"));
+		$contenedorOutput.appendChild(
+			crearElementoParrafo(calcularSueldoMensualPromedio(inputsSueldos), "mensual promedio")
+		);
+		$contenedorOutput.appendChild(crearElementoParrafo(calcularSueldoMinimo(inputsSueldos), "mínimo"));
+		$contenedorOutput.appendChild(crearElementoParrafo(calcularSueldoMaximo(inputsSueldos), "máximo"));
+	}
 };
 
 document.querySelector("#reset").onclick = function(e) {
@@ -38,6 +50,10 @@ document.querySelector("#reset").onclick = function(e) {
 	const inputs = document.querySelectorAll(".generated-element");
 	inputs.forEach(element => {
 		element.remove();
+	});
+	const $errores = document.querySelectorAll("#errores > li");
+	$errores.forEach(error => {
+		error.remove();
 	});
 };
 
@@ -63,6 +79,61 @@ function eliminarElemento() {
 	labels[labels.length - 1].remove();
 }
 
+function ocultarValoresResultados() {
+	const paragraphs = document.querySelectorAll(".p-element-output-info");
+	paragraphs.forEach(element => {
+		element.remove();
+	});
+}
+
+function procesarDatosValidados(inputsSueldos) {
+	// Toma un array, procesa a los datos llamando a validarSueldosIngresados y devuelve un JSON
+	const objetoSueldos = {};
+	for (let i = 1; i <= inputsSueldos.length; i++) {
+		objetoSueldos[`familiar-${i}`] = validarSueldosIngresados(inputsSueldos[i - 1]);
+	}
+	return objetoSueldos;
+}
+
+function validarSueldosIngresados(valorAValidar) {
+	// Toma un valor único y lo valida con una Regular Expression
+
+	// TODO Validaciones (Unit Tests)
+	const soloNumeros = /^\d+(\.\d{1,2})?$/;
+	if (valorAValidar == "") {
+		return "Tenés que ingresar un valor";
+	} else if (!soloNumeros.test(valorAValidar)) {
+		return "Solo se pueden ingresar caracteres numéricos enteros o con hasta 2 decimales";
+	} else {
+		return "";
+	}
+}
+
+function manejarErrores(errores) {
+	// Limpia errores anteriores
+	const $errores = document.querySelectorAll("#errores > li");
+	$errores.forEach(error => {
+		error.remove();
+	});
+	const $errorContainer = document.querySelector("#errores");
+	const nombreInputs = Object.keys(errores);
+	let cantidadErorres = 0;
+	nombreInputs.forEach(nombreInput => {
+		const error = errores[nombreInput];
+		if (error) {
+			cantidadErorres++;
+			$form[nombreInput].classList.add("error");
+			const $elementoError = document.createElement("li");
+			$elementoError.innerText = error;
+			$errorContainer.appendChild($elementoError);
+		} else {
+			$form[nombreInput].classList.remove("error");
+		}
+	});
+	return cantidadErorres;
+}
+
+// ! Ver como sacar esto
 function validarArray(arrayInput) {
 	const arrayOutput = [];
 	for (let arrayValue of arrayInput) {
@@ -73,6 +144,7 @@ function validarArray(arrayInput) {
 	return arrayOutput;
 }
 
+// ! Sacar validaciones viejas
 function calcularSueldoPromedio(arraySueldos) {
 	let sueldoPromedio = 0;
 	let counter = 0;
@@ -88,6 +160,8 @@ function calcularSueldoPromedio(arraySueldos) {
 		return (sueldoPromedio / counter).toFixed(2);
 	}
 }
+
+// ! Sacar validaciones viejas
 function calcularSueldoMensualPromedio(arraySueldos) {
 	let sueldoPromedio = 0;
 	let counter = 0;
@@ -103,6 +177,8 @@ function calcularSueldoMensualPromedio(arraySueldos) {
 		return (sueldoPromedio / counter / 12).toFixed(2);
 	}
 }
+
+// ! Sacar validaciones viejas
 function calcularSueldoMinimo(arraySueldos) {
 	let arraySueldosProcesado = validarArray(arraySueldos);
 	let sueldoMinimo = arraySueldosProcesado[0];
@@ -117,6 +193,8 @@ function calcularSueldoMinimo(arraySueldos) {
 		return sueldoMinimo.toFixed(2);
 	}
 }
+
+// ! Sacar validaciones viejas
 function calcularSueldoMaximo(arraySueldos) {
 	let sueldoMaximo = arraySueldos[0];
 	for (let i = 0; i < arraySueldos.length; i++) {
@@ -130,6 +208,7 @@ function calcularSueldoMaximo(arraySueldos) {
 		return sueldoMaximo.toFixed(2);
 	}
 }
+
 function crearElementoParrafo(valorInterno, nombreFuncion) {
 	const nuevoParrafo = document.createElement("p");
 	nuevoParrafo.classList.add("p-element-output-info", "generated-element");
