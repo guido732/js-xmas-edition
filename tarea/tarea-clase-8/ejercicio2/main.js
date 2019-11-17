@@ -19,7 +19,7 @@ document.querySelector("#calcular").onclick = function(e) {
 	e.preventDefault();
 
 	// Limpiar resultados anteriores en caso de haberlos
-	ocultarValoresResultados();
+	eliminarValoresResultados();
 
 	// Selecciono todos mis elementos en un nodeList, luego los emprolijo en un array
 	const $inputsSueldosCrudo = document.querySelectorAll(".generated-element-input");
@@ -47,14 +47,9 @@ document.querySelector("#calcular").onclick = function(e) {
 
 document.querySelector("#reset").onclick = function(e) {
 	e.preventDefault();
-	const inputs = document.querySelectorAll(".generated-element");
-	inputs.forEach(element => {
-		element.remove();
-	});
-	const $errores = document.querySelectorAll("#errores > li");
-	$errores.forEach(error => {
-		error.remove();
-	});
+	eliminarInputsGenerados();
+	eliminarErrores();
+	eliminarValoresResultados();
 };
 
 function agregarElemento() {
@@ -79,10 +74,24 @@ function eliminarElemento() {
 	labels[labels.length - 1].remove();
 }
 
-function ocultarValoresResultados() {
+function eliminarValoresResultados() {
 	const paragraphs = document.querySelectorAll(".p-element-output-info");
 	paragraphs.forEach(element => {
 		element.remove();
+	});
+}
+
+function eliminarInputsGenerados() {
+	const inputs = document.querySelectorAll(".generated-element");
+	inputs.forEach(element => {
+		element.remove();
+	});
+}
+
+function eliminarErrores() {
+	const errores = document.querySelectorAll("#errores > li");
+	errores.forEach(error => {
+		error.remove();
 	});
 }
 
@@ -111,10 +120,8 @@ function validarSueldosIngresados(valorAValidar) {
 
 function manejarErrores(errores) {
 	// Limpia errores anteriores
-	const $errores = document.querySelectorAll("#errores > li");
-	$errores.forEach(error => {
-		error.remove();
-	});
+	eliminarErrores();
+
 	const $errorContainer = document.querySelector("#errores");
 	const nombreInputs = Object.keys(errores);
 	let cantidadErorres = 0;
