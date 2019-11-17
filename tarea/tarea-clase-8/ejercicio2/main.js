@@ -121,7 +121,6 @@ function procesarDatosValidados(inputsSueldos) {
 }
 
 // TODO Validaciones (Unit Tests)
-// TODO Rechazar botón de calcular sin haber ingresado familiares/valores
 function validarSueldosIngresados(valorAValidar) {
 	// Toma un valor único y lo valida con una Regular Expression
 	const soloNumeros = /^\d+(\.\d{1,2})?$/;
@@ -141,13 +140,13 @@ function manejarErrores(errores) {
 	const $errorContainer = document.querySelector("#errores");
 	const nombreInputs = Object.keys(errores);
 	let cantidadErorres = 0;
-	nombreInputs.forEach(nombreInput => {
+	nombreInputs.forEach(function(nombreInput, i) {
 		const error = errores[nombreInput];
 		if (error) {
 			cantidadErorres++;
 			$form[nombreInput].classList.add("error");
 			const $elementoError = document.createElement("li");
-			$elementoError.innerText = error;
+			$elementoError.innerText = `Familiar ${i + 1} - ${error}`;
 			$errorContainer.appendChild($elementoError);
 		} else {
 			$form[nombreInput].classList.remove("error");
