@@ -120,14 +120,15 @@ function procesarDatosValidados(inputsSueldos) {
 	return objetoSueldos;
 }
 
-// TODO Validaciones (Unit Tests)
 function validarSueldosIngresados(valorAValidar) {
 	// Toma un valor único y lo valida con una Regular Expression
 	const soloNumeros = /^\d+(\.\d{1,2})?$/;
-	if (valorAValidar == "") {
+	if (valorAValidar === "") {
 		return "Tenés que ingresar un valor";
 	} else if (!soloNumeros.test(valorAValidar)) {
-		return "Solo se pueden ingresar números (enteros o con hasta 2 decimales) positivos ";
+		return "Solo se pueden ingresar números (enteros o con hasta 2 decimales) positivos";
+	} else if (valorAValidar <= 0) {
+		return "El valor ingresado tiene que ser mayor a 0";
 	} else {
 		return "";
 	}
