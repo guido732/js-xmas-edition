@@ -16,6 +16,11 @@ document.querySelector("#calcular").onclick = function(e) {
 	// Limpiar resultados anteriores en caso de haberlos
 	eliminarValoresResultados();
 
+	// Verifica que haya inputs creados, de lo contrario termina el ciclo
+	if (!hayInputsCreados()) {
+		return false;
+	}
+
 	// Selecciono todos mis elementos en un nodeList, luego los emprolijo en un array
 	const $inputsSueldosCrudo = document.querySelectorAll(".generated-element-input");
 	const inputsSueldos = [];
@@ -69,6 +74,15 @@ function eliminarElemento() {
 	labels[labels.length - 1].remove();
 }
 
+function hayInputsCreados() {
+	const elementosInputsCreados = document.querySelectorAll(".generated-element-input");
+	if (elementosInputsCreados.length > 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 function crearElementoParrafo(valorInterno, nombreFuncion) {
 	const nuevoParrafo = document.createElement("p");
 	nuevoParrafo.classList.add("p-element-output-info", "generated-element");
@@ -110,7 +124,6 @@ function procesarDatosValidados(inputsSueldos) {
 // TODO Rechazar botón de calcular sin haber ingresado familiares/valores
 function validarSueldosIngresados(valorAValidar) {
 	// Toma un valor único y lo valida con una Regular Expression
-
 	const soloNumeros = /^\d+(\.\d{1,2})?$/;
 	if (valorAValidar == "") {
 		return "Tenés que ingresar un valor";
