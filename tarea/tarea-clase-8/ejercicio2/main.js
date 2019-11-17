@@ -141,7 +141,8 @@ function manejarErrores(errores) {
 }
 
 // ! Ver como sacar esto
-function validarArray(arrayInput) {
+/* function validarArray(arrayInput) {
+	// Se fija que los valores no estén 
 	const arrayOutput = [];
 	for (let arrayValue of arrayInput) {
 		if (arrayValue > 0) {
@@ -149,7 +150,7 @@ function validarArray(arrayInput) {
 		}
 	}
 	return arrayOutput;
-}
+} */
 
 // ! Sacar validaciones viejas
 function calcularSueldoPromedio(arraySueldos) {
@@ -187,7 +188,8 @@ function calcularSueldoMensualPromedio(arraySueldos) {
 
 // ! Sacar validaciones viejas
 function calcularSueldoMinimo(arraySueldos) {
-	let arraySueldosProcesado = validarArray(arraySueldos);
+	// let arraySueldosProcesado = validarArray(arraySueldos);
+	let arraySueldosProcesado = arraySueldos;
 	let sueldoMinimo = arraySueldosProcesado[0];
 	for (let i = 0; i < arraySueldosProcesado.length; i++) {
 		if (arraySueldosProcesado[i] < sueldoMinimo && arraySueldos[i] >= 1) {
@@ -197,7 +199,8 @@ function calcularSueldoMinimo(arraySueldos) {
 	if (sueldoMinimo < 1 || sueldoMinimo === undefined) {
 		throw "Ingresá al menos un sueldo válido";
 	} else {
-		return sueldoMinimo.toFixed(2);
+		// return sueldoMinimo.toFixed(2);
+		return sueldoMinimo;
 	}
 }
 
@@ -212,7 +215,8 @@ function calcularSueldoMaximo(arraySueldos) {
 	if (sueldoMaximo < 1) {
 		return "Ingresá al menos un sueldo válido";
 	} else {
-		return sueldoMaximo.toFixed(2);
+		// return sueldoMaximo.toFixed(2);
+		return sueldoMaximo;
 	}
 }
 
