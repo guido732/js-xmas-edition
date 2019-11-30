@@ -21,6 +21,9 @@ document.querySelector("#aceptar-cantidad-familiares").onclick = function(e) {
 
 	if (esExito) {
 		agregarElementos($cantidadFamiliares);
+		document.querySelector("#calcular-edades").hidden = false;
+		document.querySelector("#cantidad-familiares").disabled = true;
+		document.querySelector("#aceptar-cantidad-familiares").disabled = true;
 	}
 };
 document.querySelector("#calcular-edades").onclick = function(e) {
@@ -127,9 +130,6 @@ function agregarElementos(cantidad) {
 		document.querySelector("#input-edades-container").appendChild(newLabel);
 		document.querySelector("#input-edades-container").appendChild(newInput);
 	}
-	document.querySelector("#calcular-edades").hidden = false;
-	document.querySelector("#cantidad-familiares").disabled = true;
-	document.querySelector("#aceptar-cantidad-familiares").disabled = true;
 }
 function calcularEdadPromedio(arrayEdades) {
 	let edadPromedio = 0;
