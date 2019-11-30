@@ -59,10 +59,11 @@ document.querySelector("#reset").onclick = function(e) {
 	paragraphs.forEach(element => {
 		element.remove();
 	});
+	const $cantidadFamiliares = document.querySelector("#cantidad-familiares");
 	document.querySelector("#aceptar-cantidad-familiares").disabled = false;
-	document.querySelector("#cantidad-familiares").disabled = false;
-	document.querySelector("#cantidad-familiares").value = "";
-	document.querySelector("#cantidad-familiares").className = "";
+	$cantidadFamiliares.disabled = false;
+	$cantidadFamiliares.value = "";
+	$cantidadFamiliares.className = "";
 	document.querySelector("#calcular-edades").hidden = true;
 	limpiarErrores();
 };
