@@ -91,7 +91,7 @@ button:disabled:active {
   background-color: #aee0ff;
 }
 
-.element-container {
+.input-edades-container {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -117,4 +117,3 @@ button:disabled:active {
 .error {
   border: 1px solid red;
 }
-/*# sourceMappingURL=style.css.map */
