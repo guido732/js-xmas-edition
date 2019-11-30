@@ -8,7 +8,7 @@ Punto bonus: Crear un botón para "empezar de nuevo" que empiece el proceso nuev
 
 const $form = document.formulario;
 
-document.querySelector("#submit-cantidad-familiares").onclick = function(e) {
+document.querySelector("#aceptar-cantidad-familiares").onclick = function(e) {
 	e.preventDefault();
 	// Primera etapa, click en el botón de Aceptar para agregar los elementos
 	const $cantidadFamiliares = document.querySelector("#cantidad-familiares").value;
@@ -17,12 +17,12 @@ document.querySelector("#submit-cantidad-familiares").onclick = function(e) {
 		"cantidad-familiares": errorCantidadFamiliares
 	};
 
-	const esExito = manejarErrores(errores) === 0;
+	const esExito = !Boolean(manejarErrores(errores));
+
 	if (esExito) {
 		agregarElementos($cantidadFamiliares);
 	}
 };
-
 document.querySelector("#calcular-edades").onclick = function(e) {
 	e.preventDefault();
 	// Segunda etapa, click en el botón de Calcular Edades para calcular valores
@@ -34,7 +34,7 @@ document.querySelector("#calcular-edades").onclick = function(e) {
 	}
 	// No se la cantidad de inputs a generar, no puedo generar previamente el JSON
 	// La función validar edades hace las validaciones y devuelve directamente el JSON
-	const erroresEdadFamiliares = validarEdadFamiliares(inputsEdades);
+	const erroresEdadFamiliares = validarInputsNumericos(inputsEdades);
 	const esExito = manejarErrores(erroresEdadFamiliares) === 0;
 
 	if (esExito) {
@@ -45,7 +45,6 @@ document.querySelector("#calcular-edades").onclick = function(e) {
 		contenedorOutput.appendChild(crearElementoResultado(calcularEdadMaxima(inputsEdades), "máxima"));
 	}
 };
-
 document.querySelector("#reset").onclick = function(e) {
 	e.preventDefault();
 	const inputs = document.querySelectorAll(".generated-element-input");
@@ -60,7 +59,7 @@ document.querySelector("#reset").onclick = function(e) {
 	paragraphs.forEach(element => {
 		element.remove();
 	});
-	document.querySelector("#submit-cantidad-familiares").disabled = false;
+	document.querySelector("#aceptar-cantidad-familiares").disabled = false;
 	document.querySelector("#cantidad-familiares").disabled = false;
 	document.querySelector("#cantidad-familiares").value = "";
 	document.querySelector("#cantidad-familiares").className = "";
@@ -78,18 +77,15 @@ function validarCantidadFamiliares($cantidadFamiliares) {
 		return "";
 	}
 }
-
-function validarEdadFamiliares(edadesFamiliares) {
+function validarInputsNumericos(edadesFamiliares) {
 	const erroresJSON = {};
-	// Uso un For en vez de forEach porque necesito el index como valor
-	for (let i = 1; i <= edadesFamiliares.length; i++) {
-		// Llamo a la función de validarCantidadFamiliares pasándole un valor a la vez
-		// Aprovecho la validación de errores y Unit Tests ya hechos
-		erroresJSON[`familiar-${i}`] = validarCantidadFamiliares(edadesFamiliares[i - 1]);
-	}
+
+	edadesFamiliares.forEach((edad, index) => {
+		erroresJSON[`familiar-${index + 1}`] = validarCantidadFamiliares(edad);
+	});
+
 	return erroresJSON;
 }
-
 function manejarErrores(errores) {
 	const nombreInputs = Object.keys(errores);
 	const $errores = document.querySelector("#errores");
@@ -112,14 +108,12 @@ function manejarErrores(errores) {
 	});
 	return cantidadErrores;
 }
-
 function limpiarErrores() {
 	const errores = document.querySelector("#errores").querySelectorAll("li");
 	errores.forEach(error => {
 		error.parentNode.removeChild(error);
 	});
 }
-
 function agregarElementos(cantidad) {
 	for (let i = 0; i < cantidad; i++) {
 		const newLabel = document.createElement("label");
@@ -129,12 +123,12 @@ function agregarElementos(cantidad) {
 		const newInput = document.createElement("input");
 		newInput.id = `familiar-${i + 1}`;
 		newInput.classList.add("generated-element-input");
-		document.querySelector("#element-container").appendChild(newLabel);
-		document.querySelector("#element-container").appendChild(newInput);
+		document.querySelector("#input-edades-container").appendChild(newLabel);
+		document.querySelector("#input-edades-container").appendChild(newInput);
 	}
 	document.querySelector("#calcular-edades").hidden = false;
 	document.querySelector("#cantidad-familiares").disabled = true;
-	document.querySelector("#submit-cantidad-familiares").disabled = true;
+	document.querySelector("#aceptar-cantidad-familiares").disabled = true;
 }
 function calcularEdadPromedio(arrayEdades) {
 	let edadPromedio = 0;
@@ -167,7 +161,6 @@ function crearElementoResultado(valorInterno, nombreFuncion) {
 	nuevoElementoResultado.innerHTML = `La edad ${nombreFuncion} es ${valorInterno}`;
 	return nuevoElementoResultado;
 }
-
 function eliminarElementosResultado() {
 	const $elementosResultado = document.querySelectorAll("#output > li");
 	$elementosResultado.forEach(elementoResultado => {
